@@ -2,6 +2,7 @@ import cv2
 import glob
 import torch 
 import numpy as np
+import matplotlib.pyplot as plt
 from torch import nn                        
 from PIL import Image 
 from importlib.resources import path
@@ -9,6 +10,9 @@ from torchvision import datasets, transforms
 from torchvision.transforms import ToTensor 
 from torch.utils.data import DataLoader, Dataset
 from matplotlib import pyplot
+
+
+g_img_path = '/home/park/coding/study/FMNIST_Tutorial/jean.png'
 
 class MyModel(nn.Module):                        
     def __init__(self):                           
@@ -30,12 +34,13 @@ class MyModel(nn.Module):
 
 class CustomDataSet(Dataset):
     # 데이터셋 전처리
+    global g_img_path
+    
     def __init__(self, transform =None):
-
         self.trans = transforms.Compose([transforms.Resize((28,28)),
                                     transforms.ToTensor()])
         
-        self.test_data_list = glob.glob('/home/park/coding/study/FMNIST_Tutorial/jean.png')
+        self.test_data_list = glob.glob(g_img_path)
         self.transform = transform
         
         self.test_class_list = [8] * len(self.test_data_list) #라벨링 해주는 부분
@@ -126,5 +131,13 @@ x , y = dataset[0][0], dataset[0][1]
 with torch.no_grad():
     pred = model(x)
     predicted , actual = classes[pred[0].argmax(0)], classes[y] 
-    print(f'Predicted: "{predicted}", Actual: "{actual}"')     # 추론 결과 출력 
+    #print(f'Predicted: "{predicted}", Actual: "{actual}"')     # 추론 결과 출력 
     print(f"입력하신 파일의 객체는 {predicted} 입니다.")
+
+Original_img = cv2.imread(g_img_path)
+Original_img = cv2.cvtColor(Original_img, cv2.COLOR_BGR2RGB)
+Predicted_img = Image.open(g_img_path)
+Predicted_img = Predicted_img.resize((28,28))
+plt.subplot(121), plt.axis('on'), plt.imshow(Original_img), plt.title("Original Image")
+plt.subplot(122), plt.axis('on'), plt.imshow(Predicted_img), plt.title("Classification : " + predicted)
+plt.show()
