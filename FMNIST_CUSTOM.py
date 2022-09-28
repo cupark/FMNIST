@@ -12,7 +12,7 @@ from torch.utils.data import DataLoader, Dataset
 from matplotlib import pyplot
 
 
-g_img_path = '/home/park/coding/study/FMNIST_Tutorial/jean.png'
+g_img_path = '/home/park/coding/study/FMNIST_Tutorial/custom dataset/bag.png'
 
 class MyModel(nn.Module):                        
     def __init__(self):                           
